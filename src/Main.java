@@ -17,7 +17,7 @@ public class Main {
 
         var engine = new UserSearchEngine(userSource);
 
-        var result = engine.search("Петрова Наталья");
+        var result = engine.search("sidorov Иван");
 
         for (var r: result) {
             System.out.printf("%s | %s | %s | %s%n", r.getEmail(), r.getName(), r.getSurname(), r.getPatronymic());

@@ -54,31 +54,22 @@ public class UserSearchEngine {
 
     private List<User> getSearchedUsers(HashMap<String, UserSearchResult> results) {
         var users = new ArrayList<>(results.values().stream().toList());
-        users.sort((o1, o2) -> {
-            if (o1.exactMatches + o1.substringMatches < o2.exactMatches + o2.substringMatches) {
-                return -1;
-            } else if (o1.exactMatches + o1.substringMatches == o2.exactMatches + o2.substringMatches) {
-                if (o1.exactMatches < o2.exactMatches) {
-                    return-1;
-                } else if (o1.exactMatches == o2.exactMatches) {
-                    if (o1.substringMatches < o2.substringMatches)
-                        return -1;
-                    else if (o1.substringMatches == o2.substringMatches)
-                        return 0;
-                }
-            }
-
-            return 1;
-        });
-        Collections.reverse(users);
-
-        var result = new HashSet<User>();
+        var totalMatches = new HashMap<User, Integer>();
 
         for (var ob: users) {
-            result.addAll(ob.users);
+            for (var user: ob.users) {
+                if (!totalMatches.containsKey(user)) {
+                    totalMatches.put(user, 0);
+                }
+                totalMatches.put(user, totalMatches.get(user) + 1);
+            }
         }
 
-        return result.stream().toList();
+        var entries = new ArrayList<>(totalMatches.entrySet().stream().toList());
+        entries.sort(Comparator.comparingInt(Map.Entry::getValue));
+        Collections.reverse(entries);
+
+        return entries.stream().map(Map.Entry::getKey).toList();
     }
 
     public List<User> search(String searchString) {
